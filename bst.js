@@ -102,8 +102,6 @@ class Tree {
       if (curr.left !== null) que.push(curr.left);
       if (curr.right !== null) que.push(curr.right);
 
-      console.log(que);
-
       que.shift();
     }
   }
@@ -214,15 +212,17 @@ class Tree {
     return depth;
   }
 
-  isBalance(root = this.root) {
-    if (root === null) return null;
+  isBalanceRecur(root = this.root) {
+    if (root === null) return true;
     if (root.left === null && root.right === null) return true;
 
-    if (root.left !== null && root.right !== null) {
-      const leftNode = root.left;
-      const rightNode = root.right;
-      const rootLeftHeight = this.height(leftNode.data);
-      const rootRightHeight = this.height(rightNode.data);
+    if (root.left !== null || root.right !== null) {
+      const rootLeftHeight =
+        root.left !== null ? this.height(root.left.data) : 0;
+
+      const rootRightHeight =
+        root.right !== null ? this.height(root.right.data) : 0;
+
       const firstNum =
         rootLeftHeight >= rootRightHeight ? rootLeftHeight : rootRightHeight;
 
@@ -232,11 +232,35 @@ class Tree {
       if (firstNum - secondNum > 1) {
         return false;
       }
+
+      root.left = this.isBalanceRecur(root.left);
+      root.right = this.isBalanceRecur(root.right);
     }
-    root.left = this.isBalance(root.left);
-    root.right = this.isBalance(root.right);
 
     return root;
+  }
+
+  isBalance() {
+    let leftChild = this.root.left;
+    let rightChild = this.root.right;
+
+    while (leftChild !== null || rightChild !== null) {
+      const rootLeftHeight = this.height(leftChild.data);
+      const rootRightHeight = this.height(rightChild.data);
+
+      const firstNum =
+        rootLeftHeight >= rootRightHeight ? rootLeftHeight : rootRightHeight;
+
+      const secondNum =
+        rootLeftHeight >= rootRightHeight ? rootRightHeight : rootLeftHeight;
+
+      if (firstNum - secondNum > 1) {
+        return false;
+      }
+      leftChild = leftChild.left;
+      rightChild = rightChild.left;
+    }
+    return true;
   }
 
   rebalance() {
@@ -280,11 +304,10 @@ tree.insert(104);
 tree.insert(105);
 tree.insert(106);
 
-console.log(tree.isBalance());
+console.log(tree.isBalanceRecur());
 tree.rebalance();
 
 prettyPrint(tree.root);
-console.log(tree.isBalance());
-
-console.log(tree.root);
-// tree.levelOrder(console.log);
+console.log(tree.isBalanceRecur());
+// prettyPrint(tree.root);
+// tree.inOrder(console.log);
