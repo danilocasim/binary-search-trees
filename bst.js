@@ -102,6 +102,8 @@ class Tree {
       if (curr.left !== null) que.push(curr.left);
       if (curr.right !== null) que.push(curr.right);
 
+      console.log(que);
+
       que.shift();
     }
   }
@@ -214,13 +216,13 @@ class Tree {
 
   isBalance(root = this.root) {
     if (root === null) return null;
-    const leftNode = root.left;
-    const rightNode = root.right;
+    if (root.left === null && root.right === null) return true;
 
     if (root.left !== null && root.right !== null) {
+      const leftNode = root.left;
+      const rightNode = root.right;
       const rootLeftHeight = this.height(leftNode.data);
       const rootRightHeight = this.height(rightNode.data);
-
       const firstNum =
         rootLeftHeight >= rootRightHeight ? rootLeftHeight : rootRightHeight;
 
@@ -230,13 +232,11 @@ class Tree {
       if (firstNum - secondNum > 1) {
         return false;
       }
-      // return false if the difference is greater than 1
     }
-
     root.left = this.isBalance(root.left);
     root.right = this.isBalance(root.right);
 
-    return true;
+    return root;
   }
 
   rebalance() {
@@ -265,18 +265,26 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   }
 };
 
-const tree = new Tree([
-  1, 1, 4, 5, 4, 3, 3, 3, 3, 6, 7, 2, 8, 9, 10, 11, 12, 13, 14, 15,
-]);
+function randomArr(arr = []) {
+  if (arr.length === 100) return arr;
+  arr.push(Math.floor(Math.random() * 100) + 1);
+  return randomArr(arr);
+}
 
-tree.insert(16);
-tree.insert(17);
+const tree = new Tree(randomArr());
+
+tree.insert(101);
+tree.insert(102);
+tree.insert(103);
+tree.insert(104);
+tree.insert(105);
+tree.insert(106);
 
 console.log(tree.isBalance());
-
-prettyPrint(tree.root);
-
 tree.rebalance();
-prettyPrint(tree.root);
 
+prettyPrint(tree.root);
 console.log(tree.isBalance());
+
+console.log(tree.root);
+// tree.levelOrder(console.log);
