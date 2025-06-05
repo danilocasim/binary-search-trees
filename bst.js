@@ -213,7 +213,7 @@ class Tree {
   }
 
   isBalanceRecur(root = this.root) {
-    if (root === null) return true;
+    if (root === null) return null;
     if (root.left === null && root.right === null) return true;
 
     if (root.left !== null || root.right !== null) {
@@ -237,10 +237,43 @@ class Tree {
       root.right = this.isBalanceRecur(root.right);
     }
 
-    return root;
+    return true;
   }
 
   isBalance() {
+    const allBalanceOutputPerNode = [];
+
+    this.levelOrder((data) => {
+      const node = this.find(data);
+
+      const rootLeftHeight =
+        node.left !== null ? this.height(node.left.data) + 1 : 0;
+
+      const rootRightHeight =
+        node.right !== null ? this.height(node.right.data) + 1 : 0;
+
+      console.log(node);
+      console.log(
+        "Root Left: " + rootLeftHeight,
+        "Root Right: " + rootRightHeight
+      );
+      const firstNum =
+        rootLeftHeight >= rootRightHeight ? rootLeftHeight : rootRightHeight;
+
+      const secondNum =
+        rootLeftHeight >= rootRightHeight ? rootRightHeight : rootLeftHeight;
+
+      if (firstNum - secondNum > 1) {
+        allBalanceOutputPerNode.push(false);
+        return;
+      }
+      allBalanceOutputPerNode.push(true);
+    });
+
+    return allBalanceOutputPerNode.includes(false) ? false : true;
+  }
+
+  isBalanceIteration() {
     let leftChild = this.root.left;
     let rightChild = this.root.right;
 
@@ -258,7 +291,7 @@ class Tree {
         return false;
       }
       leftChild = leftChild.left;
-      rightChild = rightChild.left;
+      rightChild = rightChild.right;
     }
     return true;
   }
@@ -295,19 +328,31 @@ function randomArr(arr = []) {
   return randomArr(arr);
 }
 
-const tree = new Tree(randomArr());
+const tree = new Tree([4]);
+tree.insert(3);
+tree.insert(2);
 
-tree.insert(101);
-tree.insert(102);
-tree.insert(103);
-tree.insert(104);
-tree.insert(105);
-tree.insert(106);
+tree.insert(1);
+tree.insert(5);
+tree.insert(6);
 
-console.log(tree.isBalanceRecur());
-tree.rebalance();
+tree.insert(7);
 
 prettyPrint(tree.root);
-console.log(tree.isBalanceRecur());
+
+console.log(tree.isBalance());
+
+console.log("");
+console.log("Rebalance the tree");
+
+tree.rebalance();
+prettyPrint(tree.root);
+``;
+console.log(tree.isBalance());
+
+// console.log(tree.isBalanceRecur());
+
+// prettyPrint(tree.root);
+// console.log(tree.isBalanceRecur());
 // prettyPrint(tree.root);
 // tree.inOrder(console.log);
